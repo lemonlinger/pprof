@@ -1,6 +1,10 @@
 package driver
 
-import "net/http"
+import (
+	"net/http"
+
+	internaldriver "github.com/lemonlinger/pprof/internal/driver"
+)
 
 func Handler() http.Handler {
 	h := internaldriver.NewWebHandler()
