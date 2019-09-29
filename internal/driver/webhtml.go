@@ -225,6 +225,10 @@ table tr td {
   background-color: #ebf5fb;
   font-weight: bold;
 }
+form {
+  float: left;
+  margin-left: 10px;
+}
 </style>
 {{end}}
 
@@ -295,6 +299,9 @@ table tr td {
 <div id="errors">{{range .Errors}}<div>{{.}}</div>{{end}}</div>
 {{end}}
 
+{{define "profiles" -}}
+{{end}}
+
 {{define "graph" -}}
 <!DOCTYPE html>
 <html>
@@ -305,6 +312,7 @@ table tr td {
 </head>
 <body>
   {{template "header" .}}
+  {{template "profiles" .}}
   <div id="graph">
     {{.HTMLBody}}
   </div>
@@ -898,6 +906,7 @@ function viewer(baseUrl, nodes) {
 </head>
 <body>
   {{template "header" .}}
+  {{template "profiles" .}}
   <div id="top">
     <table id="toptable">
       <thead>
@@ -1015,6 +1024,7 @@ function viewer(baseUrl, nodes) {
 </head>
 <body>
   {{template "header" .}}
+  {{template "profiles" .}}
   <div id="content" class="source">
     {{.HTMLBody}}
   </div>
@@ -1034,6 +1044,7 @@ function viewer(baseUrl, nodes) {
 </head>
 <body>
   {{template "header" .}}
+  {{template "profiles" .}}
   <div id="content">
     <pre>
       {{.TextBody}}
@@ -1070,6 +1081,7 @@ function viewer(baseUrl, nodes) {
 </head>
 <body>
   {{template "header" .}}
+  {{template "profiles" .}}
   <div id="bodycontainer">
     <div id="flamegraphdetails" class="flamegraph-details"></div>
     <div class="flamegraph-content">
