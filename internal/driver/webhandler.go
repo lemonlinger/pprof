@@ -78,6 +78,7 @@ func NewWebHandler(path string) *webHandler {
 		"/peek":       http.HandlerFunc(h.peek),
 		"/flamegraph": http.HandlerFunc(h.flamegraph),
 		"/genprof":    http.HandlerFunc(h.genprof),
+		"/clearprof":  http.HandlerFunc(h.clearprof),
 	}
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
@@ -336,6 +337,18 @@ func (h *webHandler) genprof(w http.ResponseWriter, req *http.Request) {
 	redirectWithQuery(h.path)(w, req)
 }
 
+func (h *webHandler) clearprof(w http.ResponseWriter, req *http.Request) {
+	h.mtx.Lock()
+	defer h.mtx.Unlock()
+	name := getProfileNameFromQuery(req.URL)
+	if name != "" {
+		delete(h.profCache, name)
+	} else {
+		h.profCache = map[string]*profile.Profile{}
+	}
+	redirectWithQuery(h.path)(w, req)
+}
+
 // makeReport generates a report for the specified command.
 func (h *webHandler) makeReport(p *profile.Profile, w http.ResponseWriter, req *http.Request,
 	cmd []string, vars ...string) (*report.Report, []string) {
@@ -507,6 +520,9 @@ const (
     {{end}}
   </select>
   <input type="submit" value="view">
+  </form>
+  <form action="{{.Path}}clearprof">
+    <input type="submit" value="clear all">
   </form>
   <form action="{{.Path}}genprof">
   Profiling:
