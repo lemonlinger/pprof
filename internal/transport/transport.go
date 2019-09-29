@@ -24,7 +24,7 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/google/pprof/internal/plugin"
+	"github.com/lemonlinger/pprof/internal/plugin"
 )
 
 type transport struct {

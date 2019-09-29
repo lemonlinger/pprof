@@ -20,7 +20,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/google/pprof/internal/proftest"
+	"github.com/lemonlinger/pprof/internal/proftest"
 )
 
 var mappings = []*Mapping{

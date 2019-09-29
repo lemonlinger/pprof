@@ -25,7 +25,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/google/pprof/internal/proftest"
+	"github.com/lemonlinger/pprof/internal/proftest"
 )
 
 var update = flag.Bool("update", false, "Update the golden files")
