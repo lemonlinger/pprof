@@ -38,6 +38,7 @@ const (
 )
 
 type webHandler struct {
+	prefix    string
 	path      string
 	options   *plugin.Options
 	templates *template.Template
@@ -48,7 +49,7 @@ type webHandler struct {
 	inProfiling bool
 }
 
-func NewWebHandler(path string) *webHandler {
+func NewWebHandler(prefix, path string) *webHandler {
 	opts := &plugin.Options{
 		Writer:        oswriter{},
 		Obj:           &binutils.Binutils{},
@@ -62,6 +63,7 @@ func NewWebHandler(path string) *webHandler {
 	addTemplates(templates)
 	report.AddSourceTemplates(templates)
 	h := &webHandler{
+		prefix:    prefix,
 		path:      path,
 		templates: templates,
 		options:   opts,
@@ -378,7 +380,7 @@ func (h *webHandler) render(w http.ResponseWriter, tmpl string,
 	//data.SampleTypes = sampleTypes(h.prof)
 	data.Legend = legend
 	data.ProfileNames = h.profileNames()
-	data.Path = h.path
+	data.Path = filepath.Join(h.prefix, h.path)
 	html := &bytes.Buffer{}
 	if err := h.templates.ExecuteTemplate(html, tmpl, data); err != nil {
 		http.Error(w, "internal template error", http.StatusInternalServerError)

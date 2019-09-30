@@ -6,7 +6,7 @@ import (
 	internaldriver "github.com/lemonlinger/pprof/internal/driver"
 )
 
-func Handler(path string) http.Handler {
-	h := internaldriver.NewWebHandler(path)
+func Handler(prefix, path string) http.Handler {
+	h := internaldriver.NewWebHandler(prefix, path)
 	return h
 }
