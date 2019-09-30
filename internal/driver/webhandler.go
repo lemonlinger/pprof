@@ -523,10 +523,10 @@ const (
   </select>
   <input type="submit" value="view">
   </form>
-  <form action="{{.Path}}clearprof">
+  <form action="{{.Path}}/clearprof">
     <input type="submit" value="clear all">
   </form>
-  <form action="{{.Path}}genprof">
+  <form action="{{.Path}}/genprof">
   Profiling:
   <select name="pt">
     <option value="cpu">cpu</option>
