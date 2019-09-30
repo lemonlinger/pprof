@@ -327,10 +327,10 @@ form {
   {{template "script" .}}
   <script>{{template "d3origscript" .}}</script>
   <!--<script src="https://unpkg.com/viz.js@1.8.2/viz.js"></script>-->
-  <script>{{template "d3graphvizscript" .}}</script>
   <script>{{template "vizscript" .}}</script>
-  <script>{{template "renderscript" .}}</script>
+  <script>{{template "d3graphvizscript" .}}</script>
   <script>viewer(new URL(window.location.href), {{.Nodes}});</script>
+  <script>{{template "renderscript" .}}</script>
 </body>
 </html>
 {{end}}
