@@ -8,7 +8,7 @@ import (
 )
 
 func TestWebHandler(t *testing.T) {
-	h := NewWebHandler("/ui/")
+	h := NewWebHandler("/", "/ui/")
 	http.ListenAndServe(":12345", h)
 }
 

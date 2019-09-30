@@ -27,6 +27,9 @@ import (
 	"github.com/lemonlinger/pprof/internal/symbolizer"
 	"github.com/lemonlinger/pprof/internal/transport"
 	"github.com/lemonlinger/pprof/profile"
+	"github.com/lemonlinger/pprof/third_party/d3graphviz"
+	"github.com/lemonlinger/pprof/third_party/d3orig"
+	"github.com/lemonlinger/pprof/third_party/viz"
 )
 
 const (
@@ -61,6 +64,9 @@ func NewWebHandler(prefix, path string) *webHandler {
 
 	templates := template.New("templategroup")
 	template.Must(templates.Parse(genProfHTML))
+	template.Must(templates.Parse(`{{define "d3origscript"}}` + d3orig.JSSource + `{{end}}`))
+	template.Must(templates.Parse(`{{define "d3graphvizscript"}}` + d3graphviz.JSSource + `{{end}}`))
+	template.Must(templates.Parse(`{{define "vizscript"}}` + viz.JSSource + `{{end}}`))
 	addTemplates(templates)
 	report.AddSourceTemplates(templates)
 	h := &webHandler{
@@ -121,14 +127,6 @@ func (h *webHandler) dot(w http.ResponseWriter, req *http.Request) {
 	dot := &bytes.Buffer{}
 	graph.ComposeDot(dot, g, &graph.DotAttributes{}, config)
 
-	// Convert to svg.
-	svg, err := dotToSvg(dot.Bytes())
-	if err != nil {
-		http.Error(w, "Could not execute dot; may need to install graphviz.",
-			http.StatusNotImplemented)
-		return
-	}
-
 	// Get all node names into an array.
 	nodes := []string{""} // dot starts with node numbered 1
 	for _, n := range g.Nodes {
@@ -136,7 +134,7 @@ func (h *webHandler) dot(w http.ResponseWriter, req *http.Request) {
 	}
 
 	h.render(w, "graph", rpt, errList, legend, webArgs{
-		HTMLBody:      template.HTML(string(svg)),
+		TextBody:      string(dot.Bytes()),
 		Nodes:         nodes,
 		SampleTypes:   sampleTypes(prof),
 		ActiveProfile: name,
@@ -544,5 +542,12 @@ const (
   </form> 
 </div>
 {{end}}
+	`
+)
+
+const (
+	renderScript = `
+     var dotSrc = {{.TextBody}}
+     d3.select("#graph").graphviz().renderDot(dotSrc)
 	`
 )
