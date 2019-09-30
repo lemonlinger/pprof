@@ -67,7 +67,7 @@ func NewWebHandler(prefix, path string) *webHandler {
 	template.Must(templates.Parse(`{{define "d3origscript"}}` + d3orig.JSSource + `{{end}}`))
 	template.Must(templates.Parse(`{{define "d3graphvizscript"}}` + d3graphviz.JSSource + `{{end}}`))
 	template.Must(templates.Parse(`{{define "vizscript"}}` + viz.JSSource + `{{end}}`))
-	template.Must(templates.Parse(`{{define "renderscript"}}` + renderscript + `{{end}}`))
+	template.Must(templates.Parse(`{{define "renderscript"}}` + renderScript + `{{end}}`))
 	addTemplates(templates)
 	report.AddSourceTemplates(templates)
 	h := &webHandler{
