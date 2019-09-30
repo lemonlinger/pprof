@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"runtime"
 	"runtime/pprof"
@@ -336,7 +337,7 @@ func (h *webHandler) genprof(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		http.Error(w, "fail to create a profile", http.StatusInternalServerError)
 	}
-	redirectWithQuery(h.path)(w, req)
+	redirectWithQuery(path.Join(h.prefix, h.path)+"/")(w, req)
 }
 
 func (h *webHandler) clearprof(w http.ResponseWriter, req *http.Request) {
@@ -348,7 +349,7 @@ func (h *webHandler) clearprof(w http.ResponseWriter, req *http.Request) {
 	} else {
 		h.profCache = map[string]*profile.Profile{}
 	}
-	redirectWithQuery(h.path)(w, req)
+	redirectWithQuery(path.Join(h.prefix, h.path)+"/")(w, req)
 }
 
 // makeReport generates a report for the specified command.
