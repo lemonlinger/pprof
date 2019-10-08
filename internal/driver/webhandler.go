@@ -38,7 +38,11 @@ const (
 
 	defaultProfileType  = ProfileTypeCPU
 	defaultSamplePeriod = 5 * time.Second
-	maxSamplePeriod     = 60 * time.Second
+	maxSamplePeriod     = 30 * time.Second
+)
+
+var (
+	ErrNoProfile = errors.New("no specified profile, please create a cpu or memory profile first.")
 )
 
 type webHandler struct {
@@ -111,7 +115,7 @@ func (h *webHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 func (h *webHandler) dot(w http.ResponseWriter, req *http.Request) {
 	name, prof, err := h.tryGetProfile(getProfileNameFromQuery(req.URL))
 	if err != nil {
-		fmt.Fprintf(w, "fail to get an available profile")
+		h.render(w, "graph", &report.Report{}, []string{err.Error()}, nil, webArgs{})
 		return
 	}
 
@@ -145,7 +149,7 @@ func (h *webHandler) dot(w http.ResponseWriter, req *http.Request) {
 func (h *webHandler) top(w http.ResponseWriter, req *http.Request) {
 	name, prof, err := h.tryGetProfile(getProfileNameFromQuery(req.URL))
 	if err != nil {
-		fmt.Fprintf(w, "fail to get an available profile")
+		h.render(w, "top", &report.Report{}, []string{err.Error()}, nil, webArgs{})
 		return
 	}
 
@@ -171,7 +175,7 @@ func (h *webHandler) top(w http.ResponseWriter, req *http.Request) {
 func (h *webHandler) disasm(w http.ResponseWriter, req *http.Request) {
 	name, prof, err := h.tryGetProfile(getProfileNameFromQuery(req.URL))
 	if err != nil {
-		fmt.Fprintf(w, "fail to get an available profile")
+		h.render(w, "plaintext", &report.Report{}, []string{err.Error()}, nil, webArgs{})
 		return
 	}
 
@@ -201,7 +205,7 @@ func (h *webHandler) disasm(w http.ResponseWriter, req *http.Request) {
 func (h *webHandler) source(w http.ResponseWriter, req *http.Request) {
 	name, prof, err := h.tryGetProfile(getProfileNameFromQuery(req.URL))
 	if err != nil {
-		fmt.Fprintf(w, "fail to get an available profile")
+		h.render(w, "sourcelisting", &report.Report{}, []string{err.Error()}, nil, webArgs{})
 		return
 	}
 
@@ -230,7 +234,7 @@ func (h *webHandler) source(w http.ResponseWriter, req *http.Request) {
 func (h *webHandler) peek(w http.ResponseWriter, req *http.Request) {
 	name, prof, err := h.tryGetProfile(getProfileNameFromQuery(req.URL))
 	if err != nil {
-		fmt.Fprintf(w, "fail to get an available profile")
+		h.render(w, "plaintext", &report.Report{}, []string{err.Error()}, nil, webArgs{})
 		return
 	}
 
@@ -258,7 +262,7 @@ func (h *webHandler) peek(w http.ResponseWriter, req *http.Request) {
 func (h *webHandler) flamegraph(w http.ResponseWriter, req *http.Request) {
 	name, prof, err := h.tryGetProfile(getProfileNameFromQuery(req.URL))
 	if err != nil {
-		fmt.Fprintf(w, "fail to get an available profile")
+		h.render(w, "flamegraph", &report.Report{}, []string{err.Error()}, nil, webArgs{})
 		return
 	}
 
@@ -507,7 +511,7 @@ func (h *webHandler) tryGetProfile(profname string) (name string, p *profile.Pro
 		return
 	}
 
-	return h.createProfile(ProfileTypeCPU, defaultSamplePeriod)
+	return "", nil, ErrNoProfile
 }
 
 const (
@@ -537,7 +541,7 @@ const (
     <option value="5s">5s</option>
 	<option value="10s">10s</option>
 	<option value="20s">20s</option>
-	<option value="30s">20s</option>
+	<option value="30s">30s</option>
   </select>
   <input type="submit" value="create">
   </form> 
